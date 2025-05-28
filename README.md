@@ -1,0 +1,2 @@
+Asset/Scenes是自己的项目
+Asset里面的其他文件夹是引入的包素材
