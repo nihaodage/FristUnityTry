@@ -11,20 +11,33 @@ public class move : MonoBehaviour
     public Animator animator;
     public int faceDire = 1;//1表示朝右面，0表示朝左面
     public bool is_crouch=false;//当前是否在蹲下
+    BoxCollider2D boxcollider2d;
+    float collider;
     void Start()
     {
         rb2d= GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        boxcollider2d = GetComponent<BoxCollider2D>();
+        collider = boxcollider2d.offset.x;
     }
 
     void Update()
     {
         float horizontalInput = Input.GetAxis("Horizontal");//获取水平的增值
-        
-        if(horizontalInput != 0f ) //当有输入内容时
+
+        if(Input.GetButton("Horizontal")||!GetComponent<jump>().is_ground)//在移动或跳跃中阻力较小，其他时候阻力较大减小惯性
+        {
+            rb2d.drag = 3;
+        }
+        else
+        {
+            rb2d.drag = 10;
+        }
+
+        if (horizontalInput != 0f) //当有输入内容时
         {
             is_crouch = GetComponent<crouch>().is_crouching;
-            if (!is_crouch) 
+            if (!is_crouch)
                 moving(horizontalInput);//如果有输入内容就开始移动
         }
         else//当没有move时，就变回没有移动的动画
@@ -38,11 +51,13 @@ public class move : MonoBehaviour
         animator.SetBool("is_move", true);
         if (horizontalInput < 0f)//如果小于零表示向左移动
         {
+            boxcollider2d.offset = new (-collider, boxcollider2d.offset.y);
             GetComponent<SpriteRenderer>().flipX = true;//令x翻转，变为左面
             faceDire = 0;
         }
         else//否则向右移动
         {
+            boxcollider2d.offset = new(collider, boxcollider2d.offset.y);
             GetComponent<SpriteRenderer>().flipX = false;//令x不翻转，默认右面
             faceDire = 1;
         }

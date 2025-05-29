@@ -14,7 +14,7 @@ public class jump : MonoBehaviour
     public Vector3 checkOff;
     public LayerMask groundyer;
 
-    bool is_ground=true;
+    public bool is_ground=true;
     float eps = 5e-3f;//用于进行浮点比较的小数
 
     void Start()
@@ -35,11 +35,13 @@ public class jump : MonoBehaviour
 
         if(rb.velocity.y-eps<0)//如果速度为负数，表示在下降，增加重力
         {
+            animator.SetBool("is_jump_up", false);
             animator.SetBool("is_jump_fall", true);
             //施加重力
             rb.velocity += Vector2.up * Physics.gravity.y * (fallGravity - 1) * Time.deltaTime;
         }else if(rb.velocity.y-eps>0)
         {
+            animator.SetBool("is_jump_fall", false);
             animator.SetBool("is_jump_up", true);
         }
 
